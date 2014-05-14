@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author boboman13
+ * @author Austin Bolstridge
  */
-public class ProxyServer {
+public class ProxyServer implements Runnable {
 
     private Proxy proxy;
     private ServerSocket server;
@@ -20,7 +23,9 @@ public class ProxyServer {
      */
     public ProxyServer(Proxy proxy) {
         this.proxy = proxy;
+    }
 
+    public void run() {
         try {
             proxy.debug("Using address: "+proxy.getListeningIP());
             InetAddress address = InetAddress.getByName(proxy.getListeningIP());
@@ -32,18 +37,18 @@ public class ProxyServer {
 
                 this.proxy.debug("Accepted new client: "+client.getInetAddress().getHostAddress());
 
-                Registry registry = new Registry(this.proxy, client);
+                RegistryEntry registry = new RegistryEntry(this.proxy, client);
 
                 // Start the thread.
                 Thread thread = new Thread(registry);
+                thread.setName("Client at address " + client.getInetAddress().toString());
                 thread.start();
             }
         } catch (IOException ex) {
             // Bad boy, we got an error.
-            ex.printStackTrace();
-            return;
+            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE,
+                    "An exception was thrown", ex);
         }
-
     }
 
 }

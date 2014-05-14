@@ -1,12 +1,15 @@
 package net.boboman13.raw_tcp_proxy.main;
 
 import net.boboman13.raw_tcp_proxy.Proxy;
+import net.boboman13.raw_tcp_proxy.loadbalancing.LoadBalancer;
 
 /**
  * @author boboman13
  */
 public class Main {
-
+    
+    private static LoadBalancer loadBalancer = null;
+    
     public static void main(String[] args) {
         String out = "127.0.0.1";
         String listenIP = "0.0.0.0";
@@ -49,6 +52,10 @@ public class Main {
 
         // Start the proxy.
         proxy.start();
+    }
+    
+    public static LoadBalancer getLoadBalancerInstance() {
+        return loadBalancer;
     }
 
 }

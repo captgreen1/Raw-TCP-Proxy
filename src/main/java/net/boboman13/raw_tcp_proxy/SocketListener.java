@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 
 /**
+ * Manages communication from the server, through the proxy, and to the client.
+ * 
  * @author boboman13
  */
 public class SocketListener implements Runnable {
 
-    private Registry registry;
+    private RegistryEntry registry;
     private boolean isRunning = true;
 
     /**
@@ -16,7 +18,7 @@ public class SocketListener implements Runnable {
      *
      * @param registry The Registry client.
      */
-    public SocketListener(Registry registry) {
+    public SocketListener(RegistryEntry registry) {
         this.registry = registry;
     }
 
@@ -34,7 +36,9 @@ public class SocketListener implements Runnable {
                 registry.clientOut.write(request, 0, bytesRead);
                 registry.clientOut.flush();
 
-                // It may seem obscure to surround it by an if loop, but otherwise we are forced to create a new String object; the parsing to UTF-8 causes some speed issues.
+                // It may seem obscure to surround it by an if loop, 
+                //but otherwise we are forced to create a new String object;
+                //the parsing to UTF-8 causes some speed issues.
                 if(registry.getProxy().getDebug()) {
                     registry.getProxy().debug("S -> C: " + new String(request, "UTF-8"));
                 }

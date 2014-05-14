@@ -2,10 +2,11 @@ package net.boboman13.raw_tcp_proxy;
 
 /**
  * @author boboman13
+ * @author Austin Bolstridge
  */
 public class Proxy {
 
-    private RegistryManager registryManager;
+    private Registry registryManager;
     private ProxyServer proxyServer;
 
     private String host;
@@ -25,8 +26,11 @@ public class Proxy {
     public void start() {
         System.out.println("Starting Raw TCP Proxy on "+host+":"+listenPort+". Will forward to "+out+":"+port+".");
 
-        this.registryManager = new RegistryManager(this);
+        this.registryManager = new Registry(this);
         this.proxyServer = new ProxyServer(this);
+        Thread proxyThread = new Thread(this.proxyServer);
+        proxyThread.setName("Main Proxy Thread");
+        proxyThread.start();
     }
 
     /**
@@ -135,7 +139,7 @@ public class Proxy {
      *
      * @return The RegistryManager instance.
      */
-    public RegistryManager getRegistryManager() {
+    public Registry getRegistryManager() {
         return this.registryManager;
     }
 
